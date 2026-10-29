@@ -23,7 +23,8 @@ def seed_database():
     db: Session = SessionLocal()
 
     try:
-        # Ensure default tables 1-10 have stable tokens
+        # 1. Ensure default tables 1-10 exist and have stable tokens
+        print("Synchronizing restaurant tables 1-10...")
         for table_num in range(1, 11):
             tok = DEFAULT_TABLE_TOKENS.get(table_num, secrets.token_hex(4))
             existing_table = db.query(RestaurantTable).filter(RestaurantTable.number == table_num).first()
@@ -33,32 +34,28 @@ def seed_database():
                 existing_table.token = tok
         db.commit()
 
-        # Check if already seeded
-        if db.query(User).count() > 0:
-            print("Database already contains user and menu data. Tables synchronized.")
+        # 2. Ensure initial users exist
+        if db.query(User).count() == 0:
+            print("Seeding initial users...")
+            admin_user = User(
+                username=ADMIN_USERNAME,
+                password_hash=hash_password(ADMIN_PASSWORD),
+                role="admin"
+            )
+            staff_user = User(
+                username=STAFF_USERNAME,
+                password_hash=hash_password(STAFF_PASSWORD),
+                role="staff"
+            )
+            db.add_all([admin_user, staff_user])
+            db.commit()
+
+        # 3. Check if categories and menu items already exist
+        if db.query(Category).count() > 0:
+            print("Database already contains categories and menu items.")
             return
 
-        print("Seeding initial users...")
-        admin_user = User(
-            username=ADMIN_USERNAME,
-            password_hash=hash_password(ADMIN_PASSWORD),
-            role="admin"
-        )
-        staff_user = User(
-            username=STAFF_USERNAME,
-            password_hash=hash_password(STAFF_PASSWORD),
-            role="staff"
-        )
-        db.add_all([admin_user, staff_user])
-
-        print("Seeding 10 restaurant tables with random tokens...")
-        for table_num in range(1, 11):
-            table = RestaurantTable(
-                number=table_num,
-                token=secrets.token_hex(4) # 8-character hex token like "ab12cd34"
-            )
-            db.add(table)
-
+        print("Seeding categories and menu items...")
         menu_data = [
             {
                 "category": "BIRIYANI",
