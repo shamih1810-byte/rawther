@@ -15,3 +15,4 @@ services:
         value: "₹"
       - key: RATE_LIMIT_ORDERS_PER_MINUTE
         value: "3"
+

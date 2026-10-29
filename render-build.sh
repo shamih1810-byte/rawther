@@ -10,3 +10,4 @@ npm run build --prefix frontend
 
 echo "===> Installing Backend Python Dependencies"
 pip install -r backend/requirements.txt
+

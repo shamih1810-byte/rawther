@@ -525,15 +525,16 @@ export const bulkUpdatePricesApi = async (updates) => {
     });
     return await handleResponse(res);
   } catch (err) {
+    console.warn("Backend unavailable for bulk prices. Saving locally:", err.message);
     const menu = getLocalMenu();
     updates.forEach(up => {
       for (const cat of menu) {
         const it = (cat.items || []).find(item => item.id === up.item_id);
         if (it) {
-          if (up.base_price !== undefined) it.base_price = up.base_price;
+          if (up.base_price !== undefined && up.base_price !== null) it.base_price = up.base_price;
           if (up.variant_id && it.variants) {
             const va = it.variants.find(v => v.id === up.variant_id);
-            if (va) va.price = up.price;
+            if (va) va.price = up.variant_price !== undefined ? up.variant_price : up.price;
           }
         }
       }
