@@ -478,8 +478,6 @@ export const deleteMenuItemApi = async (id) => {
     return { success: true };
   }
 };
-  }
-};
 
 export const toggleItemAvailabilityApi = async (id, isAvailable) => {
   try {
