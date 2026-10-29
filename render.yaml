@@ -8,11 +8,11 @@ services:
       - key: DATABASE_URL
         value: sqlite:///./biriyani.db
       - key: SECRET_KEY
-        generateValue: true
+        value: "biriyani_secret_key_change_in_production_jwt_2026"
       - key: RESTAURANT_NAME
         value: "Rawther Biriyani"
       - key: CURRENCY_SYMBOL
         value: "₹"
       - key: RATE_LIMIT_ORDERS_PER_MINUTE
-        value: "3"
+        value: "30"
 

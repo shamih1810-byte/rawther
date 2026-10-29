@@ -425,6 +425,7 @@ export const createMenuItemApi = async (itemData) => {
     });
     return await handleResponse(res);
   } catch (err) {
+    if (err.status && err.status >= 400 && err.status < 500) throw err;
     const menu = getLocalMenu();
     const cat = menu.find(c => c.id === itemData.category_id);
     const newItem = { id: Date.now(), ...itemData, variants: itemData.variants || [] };
@@ -446,6 +447,7 @@ export const updateMenuItemApi = async (id, itemData) => {
     });
     return await handleResponse(res);
   } catch (err) {
+    if (err.status && err.status >= 400 && err.status < 500) throw err;
     const menu = getLocalMenu();
     for (const cat of menu) {
       const it = (cat.items || []).find(item => item.id === id);
@@ -467,12 +469,15 @@ export const deleteMenuItemApi = async (id) => {
     });
     return await handleResponse(res);
   } catch (err) {
+    if (err.status && err.status >= 400 && err.status < 500) throw err;
     const menu = getLocalMenu();
     for (const cat of menu) {
       cat.items = (cat.items || []).filter(item => item.id !== id);
     }
     saveLocalMenu(menu);
     return { success: true };
+  }
+};
   }
 };
 
@@ -529,6 +534,7 @@ export const bulkUpdatePricesApi = async (updates) => {
     });
     return await handleResponse(res);
   } catch (err) {
+    if (err.status && err.status >= 400 && err.status < 500) throw err;
     console.warn("Backend unavailable for bulk prices. Saving locally:", err.message);
     const menu = getLocalMenu();
     updates.forEach(up => {
