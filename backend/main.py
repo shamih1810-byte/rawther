@@ -7,6 +7,8 @@ from datetime import datetime, date
 from typing import List, Optional
 
 from fastapi import FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect, UploadFile, File, Query
+from fastapi.responses import FileResponse
+from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session, joinedload
@@ -687,3 +689,24 @@ async def websocket_menu(websocket: WebSocket):
         manager.disconnect_menu(websocket)
     except Exception:
         manager.disconnect_menu(websocket)
+
+
+# ==========================================
+# PRODUCTION SPA FRONTEND SERVING
+# ==========================================
+frontend_dist = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+if frontend_dist.exists() and (frontend_dist / "index.html").exists():
+    if (frontend_dist / "assets").exists():
+        app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="spa-assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        if full_path.startswith("api/") or full_path.startswith("ws/") or full_path.startswith("uploads/"):
+            raise HTTPException(status_code=404, detail="Not Found")
+        
+        target_file = frontend_dist / full_path
+        if full_path and target_file.exists() and target_file.is_file():
+            return FileResponse(str(target_file))
+        
+        return FileResponse(str(frontend_dist / "index.html"))
+

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: rawther-biriyani
+    runtime: python
+    buildCommand: "./render-build.sh"
+    startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///./biriyani.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: RESTAURANT_NAME
+        value: "Rawther Biriyani"
+      - key: CURRENCY_SYMBOL
+        value: "₹"
+      - key: RATE_LIMIT_ORDERS_PER_MINUTE
+        value: "3"
