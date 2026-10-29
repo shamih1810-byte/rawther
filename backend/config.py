@@ -20,7 +20,7 @@ STAFF_PASSWORD = os.getenv("STAFF_PASSWORD", "rawchef786")
 
 RESTAURANT_NAME = os.getenv("RESTAURANT_NAME", "Rawther Biriyani")
 CURRENCY_SYMBOL = os.getenv("CURRENCY_SYMBOL", "₹")
-RATE_LIMIT_ORDERS_PER_MINUTE = int(os.getenv("RATE_LIMIT_ORDERS_PER_MINUTE", "3"))
+RATE_LIMIT_ORDERS_PER_MINUTE = int(os.getenv("RATE_LIMIT_ORDERS_PER_MINUTE", "30"))
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)

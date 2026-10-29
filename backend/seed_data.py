@@ -5,14 +5,37 @@ from .models import Category, MenuItem, ItemVariant, RestaurantTable, User
 from .auth import hash_password
 from .config import ADMIN_USERNAME, ADMIN_PASSWORD, STAFF_USERNAME, STAFF_PASSWORD
 
+DEFAULT_TABLE_TOKENS = {
+    1: '30e22f77',
+    2: 'dea428d6',
+    3: 'd179f486',
+    4: '1ab56c1e',
+    5: '50c791a4',
+    6: 'c58db83b',
+    7: '8ff582c6',
+    8: 'f0211066',
+    9: '90388afa',
+    10: '8b94744a'
+}
+
 def seed_database():
     Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
 
     try:
+        # Ensure default tables 1-10 have stable tokens
+        for table_num in range(1, 11):
+            tok = DEFAULT_TABLE_TOKENS.get(table_num, secrets.token_hex(4))
+            existing_table = db.query(RestaurantTable).filter(RestaurantTable.number == table_num).first()
+            if not existing_table:
+                db.add(RestaurantTable(number=table_num, token=tok))
+            elif not existing_table.token or existing_table.token != tok:
+                existing_table.token = tok
+        db.commit()
+
         # Check if already seeded
         if db.query(User).count() > 0:
-            print("Database already contains data. Skipping full seed.")
+            print("Database already contains user and menu data. Tables synchronized.")
             return
 
         print("Seeding initial users...")

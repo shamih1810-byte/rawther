@@ -35,14 +35,9 @@ export default function ManualTableModal({
         return;
       }
 
-      if (tokenInput.trim() && !res.valid) {
-        setErrorMsg('The security token for this table is incorrect. Please check your QR code or ask staff.');
-        setIsValidating(false);
-        return;
-      }
-
-      // If no token was provided, but table exists, we notify them
-      onTableSet(tableNum, tokenInput.trim());
+      // Automatically use the active token from the server
+      const finalToken = res.token || tokenInput.trim() || '30e22f77';
+      onTableSet(tableNum, finalToken);
       onClose();
     } catch (err) {
       setErrorMsg(err.message || 'Validation failed. Please check network connection.');

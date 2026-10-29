@@ -149,6 +149,10 @@ export const placeOrderApi = async (orderPayload) => {
     });
     return await handleResponse(res);
   } catch (err) {
+    // If server responded with a client-side error (400, 429, etc.), throw it directly to UI
+    if (err.status && err.status >= 400 && err.status < 500) {
+      throw err;
+    }
     const menu = getLocalMenu();
     const newOrder = {
       id: Math.floor(1000 + Math.random() * 9000),
