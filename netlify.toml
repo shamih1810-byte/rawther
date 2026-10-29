@@ -1,0 +1,16 @@
+# Netlify configuration for Rawther Biriyani App
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
+
+# React Router SPA single-page rewrite (prevents 404 on refresh)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "20"
